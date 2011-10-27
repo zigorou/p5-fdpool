@@ -3,7 +3,7 @@ package FDPool::Client;
 use strict;
 use warnings;
 
-use Croak;
+use Carp;
 use File::Temp qw(tempfile);
 use IO::Socket::UNIX;
 use JSON::XS;
@@ -91,7 +91,8 @@ sub send_command {
     chomp(my $response_header = <$client_sock>);
     my ( $response_code, $response_body_size ) = split(' ', $response_header);
 
-    unless ( $client_sock->recv(my $response_body, $response_body_size) ) {
+    my $response_body;
+    unless ( $client_sock->recv($response_body, $response_body_size) ) {
         return (0, { error => sprintf('Connection closed by peer (peerhost: %s)', $client_sock->peerhost) });
     }
 
